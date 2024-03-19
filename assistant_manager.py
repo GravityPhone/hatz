@@ -2,6 +2,7 @@ import openai
 from openai import Assistant
 from typing_extensions import override
 import time
+import logging
 
 class EventHandler(Assistant):    
   @override
@@ -33,10 +34,10 @@ class AssistantManager:
     def create_thread(self):
         try:
             thread = self.client.beta.threads.create()
-            print(f'Successfully created thread with ID: {thread.id}')
+            logging.info(f'Successfully created thread with ID: {thread.id}')
             return thread.id
         except Exception as e:
-            print(f"Failed to create a thread: {e}")
+            logging.info(f"Failed to create a thread: {e}")
             return None
 
     def add_message_to_thread(self, thread_id, message_content, role="user"):
@@ -46,10 +47,10 @@ class AssistantManager:
                 role=role,
                 content=message_content
             )
-            print(f'Successfully added the message with ID: {message.id} to thread: {thread_id}')
+            logging.info(f'Successfully added the message with ID: {message.id} to thread: {thread_id}')
             return message.id
         except Exception as e:
-            print(f"Failed to add message to thread {thread_id}: {e}")
+            logging.info(f"Failed to add message to thread {thread_id}: {e}")
             return None
 
     def run_assistant(self, thread_id, assistant_id, instructions):
@@ -69,8 +70,8 @@ class AssistantManager:
             # Assuming response.data contains the messages and taking the first one
             recent_message = response.data[0] if response.data else None
             if recent_message:
-                print(f'Retrieved the most recent message: {recent_message.id} from thread: {thread_id}')
+                logging.info(f'Retrieved the most recent message: {recent_message.id} from thread: {thread_id}')
             return recent_message
         except Exception as e:
-            print(f"Failed to retrieve the most recent message from thread {thread_id}: {e}")
+            logging.info(f"Failed to retrieve the most recent message from thread {thread_id}: {e}")
             return None
