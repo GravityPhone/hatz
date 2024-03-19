@@ -27,18 +27,19 @@ def handle_detected_words(words):
     if "computer" in detected_phrase and not is_recording:
         start_recording()
         is_recording = True
-        print("Recording started...")
+        print(f"Recording started due to detection of the keyword 'computer'.")
     elif "snapshot" in detected_phrase and is_recording:
         picture_mode = True
-        print("Picture mode activated...")
+        print(f"Picture mode activated due to detection of the keyword 'snapshot'.")
     elif "reply" in detected_phrase and is_recording:
         stop_recording()
         is_recording = False
-        print("Recording stopped. Processing...")
+        print(f"Recording stopped and processing started due to detection of the keyword 'reply'.")
         process_recording()
 
 def process_recording():
     global picture_mode, last_thread_id, last_interaction_time
+    print("Processing recorded audio...")
     transcription = assemblyai_transcriber.transcribe_audio_file("recorded_audio.wav")
     print(f"Transcription result: '{transcription}'")
 
@@ -57,16 +58,18 @@ def process_recording():
 
 def interact_with_assistant(transcription):
     global last_thread_id, last_interaction_time
+    print(f"Initiating interaction with assistant with transcription: {transcription}")
     if not last_thread_id or time.time() - last_interaction_time > 90:
         last_thread_id = assistant_manager.create_thread()
+    print(f"Using thread ID: {last_thread_id} for the current interaction")
 
     last_interaction_time = time.time()
 
     message_id = assistant_manager.add_message_to_thread(last_thread_id, transcription)
-    print(f"Message added with ID: {message_id}")
+    print(f"Message added to the thread with ID: {message_id}")
     # Initiate a run on the thread for the assistant to process the message
     run_id = assistant_manager.run_assistant(last_thread_id, assistant_id="asst_3D8tACoidstqhbw5JE2Et2st", instructions=transcription)
-    print(f"Assistant run initiated with ID: {run_id}")
+    print(f"Assistant run initiated with run ID: {run_id}")
 
     # Check if the run is completed and retrieve the processed response
     if assistant_manager.check_run_status(last_thread_id, run_id):
