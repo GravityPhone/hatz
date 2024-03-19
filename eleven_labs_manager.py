@@ -23,9 +23,12 @@ class ElevenLabsManager:
                 api_key=self.api_key  # Pass the API key directly
             )
             if audio:
+                print('Audio generated successfully, beginning playback...')
                 play(audio)
+                print('Playback completed.')
             else:
                 print("Failed to generate audio.")
+                print('Terminating playback.')
         except Exception as e:
             print(f"Error generating or playing audio: {e}")
 
