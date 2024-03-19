@@ -1,5 +1,5 @@
 import openai
-from openai.api import Assistant
+from openai import Assistant
 from typing_extensions import override
 import time
 
