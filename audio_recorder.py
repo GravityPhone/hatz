@@ -56,14 +56,14 @@ class AudioRecorder:
             self.frames = []
             self.thread = threading.Thread(target=self._record_audio)
             self.thread.start()
-            print("Recording started...")
+            print("Recording started. The audio recording process is now in progress...")
 
     def stop_recording(self):
         """Stops the audio recording."""
         if self.is_recording:
             self.is_recording = False
             self.thread.join()  # Wait for the recording thread to finish
-            print("Recording stopped.")
+            print("Recording stopped. The audio recording process has completed.")
 
 # Global instance to be used outside this script
 recorder = AudioRecorder()
