@@ -68,8 +68,8 @@ def interact_with_assistant(transcription):
     message_id = assistant_manager.add_message_to_thread(last_thread_id, transcription)
     print(f"Message added to the thread with ID: {message_id}")
     # Initiate a run on the thread for the assistant to process the message
-    run_id = assistant_manager.run_assistant(last_thread_id, assistant_id="asst_3D8tACoidstqhbw5JE2Et2st", instructions=transcription)
-    print(f"Assistant run initiated with run ID: {run_id}")
+    response = assistant_manager.run_assistant(last_thread_id, instructions=transcription)
+    print(f"Assistant run initiated with HTTP response: {response}")
 
     # Check if the run is completed and retrieve the processed response
     if assistant_manager.check_run_status(last_thread_id, run_id):
