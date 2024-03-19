@@ -1,4 +1,6 @@
 import openai
+from openai import AssistantEventHandler
+from typing_extensions import override
 import time
 
 class AssistantManager:
@@ -27,34 +29,20 @@ class AssistantManager:
             return None
 
     def run_assistant(self, thread_id, assistant_id, instructions):
-        try:
-            run = self.client.beta.threads.runs.create(
-                thread_id=thread_id,
-                assistant_id=assistant_id,
-                instructions=instructions
-            )
-            return run.id
-        except Exception as e:
-            print(f"Failed to run assistant on thread {thread_id}: {e}")
-            return None
+      try:
+          with self.client.beta.threads.runs.create_and_stream(
+              thread_id=thread_id,
+              assistant_id=assistant_id,
+              instructions=instructions,
+              event_handler=EventHandler(),
+          ) as stream:
+              stream.until_done()
+          return True
+      except Exception as e:
+          print(f"Failed to run assistant on thread {thread_id}: {e}")
+          return False
 
-    def check_run_status(self, thread_id, run_id, timeout=300):
-        start_time = time.time()
-        while time.time() - start_time < timeout:
-            try:
-                run_status = self.client.beta.threads.runs.retrieve(
-                    thread_id=thread_id,
-                    run_id=run_id
-                )
-                if run_status.status == 'completed':
-                    return True
-                elif run_status.status in ['failed', 'cancelled']:
-                    return False
-                time.sleep(1)
-            except Exception as e:
-                print(f"Failed to check run status: {e}")
-                return False
-        return False
+    
 
     def retrieve_most_recent_message(self, thread_id):
         try:
