@@ -1,6 +1,29 @@
 import openai
+from openai import AssistantEventHandler
 from typing_extensions import override
 import time
+
+class EventHandler(AssistantEventHandler):    
+  @override
+  def on_text_created(self, text) -> None:
+    print(f"\nassistant > ", end="", flush=True)
+      
+  @override
+  def on_text_delta(self, delta, snapshot):
+    print(delta.value, end="", flush=True)
+      
+  def on_tool_call_created(self, tool_call):
+    print(f"\nassistant > {tool_call.type}\n", flush=True)
+  
+  def on_tool_call_delta(self, delta, snapshot):
+    if delta.type == 'code_interpreter':
+      if delta.code_interpreter.input:
+        print(delta.code_interpreter.input, end="", flush=True)
+      if delta.code_interpreter.outputs:
+        print(f"\n\noutput >", flush=True)
+        for output in delta.code_interpreter.outputs:
+          if output.type == "logs":
+            print(f"\n{output.logs}", flush=True)
 
 class AssistantManager:
     def __init__(self, openai_api_key):
@@ -30,19 +53,13 @@ class AssistantManager:
             return None
 
     def run_assistant(self, thread_id, assistant_id, instructions):
-      try:
-          with self.client.beta.threads.runs.create_and_stream(
-              thread_id=thread_id,
-              assistant_id=assistant_id,
-              instructions=instructions,
-              event_handler=EventHandler(),
-          ) as stream:
-              stream.until_done()
-          print(f'Successfully started the assistant on thread: {thread_id}')
-          return True
-      except Exception as e:
-          print(f"Failed to run assistant on thread {thread_id}: {e}")
-          return False
+        with self.client.beta.threads.runs.create_and_stream(
+            thread_id=thread_id,
+            assistant_id=assistant_id,
+            instructions=instructions,
+            event_handler=EventHandler(),
+        ) as stream:
+            stream.until_done()
 
     
 
