@@ -10,6 +10,7 @@ class AssemblyAITranscriber:
         transcriber = aai.Transcriber()
         # Start the transcription process
         transcript = transcriber.transcribe(audio_file_path)
+        print(f'Transcription result: {transcript.text}')
         
         # Check the transcription status and return the appropriate response
         if transcript.status == aai.TranscriptStatus.error:

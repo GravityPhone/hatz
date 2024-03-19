@@ -11,6 +11,7 @@ class AssistantManager:
     def create_thread(self):
         try:
             thread = self.client.beta.threads.create()
+            print(f'Successfully created thread with ID: {thread.id}')
             return thread.id
         except Exception as e:
             print(f"Failed to create a thread: {e}")
@@ -23,6 +24,7 @@ class AssistantManager:
                 role=role,
                 content=message_content
             )
+            print(f'Successfully added the message with ID: {message.id} to thread: {thread_id}')
             return message.id
         except Exception as e:
             print(f"Failed to add message to thread {thread_id}: {e}")
@@ -37,6 +39,7 @@ class AssistantManager:
               event_handler=EventHandler(),
           ) as stream:
               stream.until_done()
+          print(f'Successfully started the assistant on thread: {thread_id}')
           return True
       except Exception as e:
           print(f"Failed to run assistant on thread {thread_id}: {e}")
@@ -48,7 +51,10 @@ class AssistantManager:
         try:
             response = self.client.beta.threads.messages.list(thread_id=thread_id, order='desc', limit=1)
             # Assuming response.data contains the messages and taking the first one
-            return response.data[0] if response.data else None
+            recent_message = response.data[0] if response.data else None
+            if recent_message:
+                print(f'Retrieved the most recent message: {recent_message.id} from thread: {thread_id}')
+            return recent_message
         except Exception as e:
             print(f"Failed to retrieve the most recent message from thread {thread_id}: {e}")
             return None
