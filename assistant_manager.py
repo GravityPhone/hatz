@@ -53,19 +53,13 @@ class AssistantManager:
             return None
 
     def run_assistant(self, thread_id, assistant_id, instructions):
-      try:
-          with self.client.beta.threads.runs.create_and_stream(
-              thread_id=thread_id,
-              assistant_id=assistant_id,
-              instructions=instructions,
-              event_handler=EventHandler(),
-          ) as stream:
-              stream.until_done()
-          print(f'Successfully started the assistant on thread: {thread_id}')
-          return True
-      except Exception as e:
-          print(f"Failed to run assistant on thread {thread_id}: {e}")
-          return False
+        with self.client.beta.threads.runs.create_and_stream(
+            thread_id=thread_id,
+            assistant_id=assistant_id,
+            instructions=instructions,
+            event_handler=EventHandler(),
+        ) as stream:
+            stream.until_done()
 
     
 
