@@ -22,6 +22,7 @@ class VisionModule:
         self.image_path = f"/tmp/{image_file_name}"
         print("Taking picture now...")
         capture_command = f"fswebcam --no-banner --resolution 1280x720 --save {self.image_path} -d /dev/video0 -r 1280x720 --png 1"
+        print(f'Image capturing command has been executed')
 
         try:
             subprocess.check_call(capture_command.split())
@@ -36,7 +37,9 @@ class VisionModule:
         """Encodes the captured image to a base64 string."""
         if self.image_path and os.path.exists(self.image_path):
             with open(self.image_path, "rb") as image_file:
-                return base64.b64encode(image_file.read()).decode('utf-8')
+                encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+                print(f'Image encoded to base64: {encoded_image}')
+                return encoded_image
         else:
             print("No image file found or image capture failed.")
         return None
@@ -62,6 +65,7 @@ class VisionModule:
                 ],
                 "max_tokens": 300
             }
+            print(f'Sending POST request to OpenAI API for image description')
 
             response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
             if response.status_code == 200:
@@ -79,7 +83,7 @@ class VisionModule:
         base64_image = self.encode_image_to_base64()
         if base64_image:
             description = self.get_image_description(transcription, base64_image)
-            print(f"Sending image description request...")
+            print(f'Sending image description request, obtained description: {description}')
             # Cleanup
             if self.image_path and os.path.exists(self.image_path):
                 os.remove(self.image_path)
