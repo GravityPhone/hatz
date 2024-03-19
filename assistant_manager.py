@@ -1,5 +1,4 @@
 import openai
-from openai import AssistantEventHandler
 from typing_extensions import override
 import time
 
