@@ -32,9 +32,8 @@ def handle_detected_words(words):
         picture_mode = True
         print(f"Picture mode activated due to detection of the keyword 'snapshot'.")
     elif "reply" in detected_phrase and is_recording:
-        stop_recording()
-        is_recording = False
-        print(f"Recording stopped and processing started due to detection of the keyword 'reply'.")
+        print(f"Keyword 'reply' detected. Starting to stream the recording.")
+        start_streaming_to_assistant()
         process_recording()
 
 def process_recording():
@@ -68,7 +67,7 @@ def interact_with_assistant(transcription):
     message_id = assistant_manager.add_message_to_thread(last_thread_id, transcription)
     print(f"Message added to the thread with ID: {message_id}")
     # Initiate a run on the thread for the assistant to process the message
-    run_id = assistant_manager.run_assistant(last_thread_id, assistant_id="asst_3D8tACoidstqhbw5JE2Et2st", instructions=transcription)
+    run_id = assistant_manager.run_assistant(last_thread_id, assistant_id="asst_3D8tACoidstqhbw5JE2Et2st", instructions=transcription, event_handler=StreamEventHandler())
     print(f"Assistant run initiated with run ID: {run_id}")
 
     # Check if the run is completed and retrieve the processed response

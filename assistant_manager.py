@@ -1,5 +1,5 @@
 import openai
-from openai import AssistantEventHandler
+
 from typing_extensions import override
 import time
 
@@ -57,7 +57,7 @@ class AssistantManager:
             thread_id=thread_id,
             assistant_id=assistant_id,
             instructions=instructions,
-            event_handler=EventHandler(),
+            event_handler=EventHandler()
         ) as stream:
             stream.until_done()
 
