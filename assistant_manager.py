@@ -1,9 +1,9 @@
 import openai
-from openai import AssistantEventHandler
+from openai.api import Assistant
 from typing_extensions import override
 import time
 
-class EventHandler(AssistantEventHandler):    
+class EventHandler(Assistant):    
   @override
   def on_text_created(self, text) -> None:
     print(f"\nassistant > ", end="", flush=True)
